@@ -18,6 +18,7 @@ if __name__ == '__main__':
     uniq_urls = get_links(page_content, main_url)
 
     print(f'найдено {len(uniq_urls)} уникальных ссылок')
+    parseend=sys.argv[2]
     cnt = 0
     for url in uniq_urls:
         page_content = get_page_content(main_url+url)
@@ -26,5 +27,5 @@ if __name__ == '__main__':
 
         cnt += 1
 
-        if cnt > 5:
+        if cnt > parseend:
             break
