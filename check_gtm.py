@@ -14,18 +14,31 @@ if __name__ == '__main__':
         print('GTM не найдена на главной странице')
         exit(1)
 
-    print(main_gtm)
-    uniq_urls = get_links(page_content, main_url)
+    print('На главной странице найдена метка:', main_gtm)
+    downloaded_urls = set()
+    urls_to_download = get_links(page_content, main_url)
 
-    print(f'найдено {len(uniq_urls)} уникальных ссылок')
-    parseend=sys.argv[2]
+    gtm_same = []
+    gtm_differ = []
+
     cnt = 0
-    for url in uniq_urls:
-        page_content = get_page_content(main_url+url)
+    while (urls_to_download):
+        url = list(urls_to_download)[0]
+        urls_to_download.remove(url)
+        downloaded_urls.add(url)
+
+        page_content = get_page_content(main_url + url)
         gtm = extract_gtm(page_content)
-        print(gtm == main_gtm, url)
-
+        if gtm == main_gtm:
+            gtm_same.append(url)
+        else:
+            gtm_differ.append(url)
         cnt += 1
+        new_links = get_links(page_content, main_url + url)
 
-        if cnt > parseend:
-            break
+        urls_to_download |= new_links - downloaded_urls
+
+    print(f'На {len(gtm_differ)} страницах GTM отличается от главной страницы')
+    for url in gtm_differ:
+        print(url)
+
